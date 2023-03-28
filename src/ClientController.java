@@ -1,18 +1,17 @@
 // 01/03/2023 Alix Corley & CW Group, University of Greenwich Advanced Programming
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.lang.System;
 import java.util.Scanner;
 
-public class Client {
+public class ClientController {
 
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String username;
 
-    public Client(Socket socket, String username) {
+    public ClientController(Socket socket, String username) {
         try {
             this.socket = socket;
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -62,13 +61,6 @@ public class Client {
                         closeEverything(socket, bufferedReader, bufferedWriter);
                     }
 
-//                    try {
-//                        // directMessage = buffered reader.readLine();
-//                        // System.out.println(directMessage);
-//
-//                    } catch (IOException e) {
-//                        closeEverything(socket, bufferedReader, bufferedWriter);
-//                    }
                 }
 
             }
@@ -96,12 +88,13 @@ public class Client {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter your username for the group chat: ");
         String username = scanner.nextLine();
+        // TODO: Server Log with Timestamps (Save in Terminal Output or Log file)
         System.out.println("SERVER MESSAGE: Welcome to the group chat, " + username + "! " +
                          "\nSERVER MESSAGE: Please type a message and press 'Enter'.");
 
         // Socket socket = new Socket(InetAddress.getLocalHost(), 1234);
         Socket socket = new Socket("localhost", 9000);
-        Client client = new Client(socket, username);
+        ClientController client = new ClientController(socket, username);
 
         // listen / send on separate processes, so they do not block each other.
         client.listenForMessage();

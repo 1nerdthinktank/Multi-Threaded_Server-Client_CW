@@ -3,6 +3,8 @@ import java.io.*;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ClientHandler implements Runnable {
     /**
@@ -19,6 +21,12 @@ public class ClientHandler implements Runnable {
     private BufferedWriter bufferedWriter;
     public String clientUsername;
 
+    private final LocalDateTime currentTime = LocalDateTime.now();
+    private final DateTimeFormatter formattedTime = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    private final String timestamp = currentTime.format(formattedTime);
+
+
+
     public ClientHandler (Socket socket) {
 
         try {
@@ -27,11 +35,11 @@ public class ClientHandler implements Runnable {
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.clientUsername = bufferedReader.readLine();
             clientHandlers.add(this);
-            broadcastMessage("SERVER MESSAGE: " + clientUsername + " has entered the group chat");
+            broadcastMessage("SERVER BROADCAST: " + timestamp + clientUsername + " has entered the group chat");
 
             // if start of server, print first users name (controller)
             if (clientHandlers.size() == 1) {
-                System.out.println("SERVER LOG - SERVER MESSAGE: " + clientUsername +  " has entered the group chat, you are the client 'controller'");
+                System.out.println("SERVER LOG " + timestamp + "- SERVER BROADCAST: " +  clientUsername +  " has entered the group chat, you are the client 'controller'");
             }
 
         } catch (IOException e) {
@@ -62,8 +70,8 @@ public class ClientHandler implements Runnable {
             try {
                 // if message to send username equals current socket username, send message as that user --> CANNOT USE DUPLICATE USERNAMES --> Add Unique Name Validation?
                 if (!clientHandler.clientUsername.equals(clientUsername)) {
-                    clientHandler.bufferedWriter.write("GROUP CHAT - "+messageToSend);
-                    System.out.println(("SERVER LOG - "+ messageToSend)); // TODO: Add datetime stamp to logs?
+                    clientHandler.bufferedWriter.write("GROUP CHAT " + timestamp + " - " + messageToSend);
+                    System.out.println(("SERVER LOG " + timestamp + " - " + messageToSend));
                     clientHandler.bufferedWriter.newLine();
                     clientHandler.bufferedWriter.flush();
                 }
@@ -75,14 +83,12 @@ public class ClientHandler implements Runnable {
 
     public void removeClientHandler() {
         clientHandlers.remove(this);
-        // does this show in second client instance?
-        broadcastMessage("SERVER MESSAGE: " + clientUsername + " disconnected from the the chat!" );
+
+        broadcastMessage("SERVER MESSAGE " + timestamp + " - " + clientUsername + " Has Unexpectedly disconnected from the the chat!" );
 
         if (clientHandlers.isEmpty()) {
-            System.out.println("SERVER LOG - All Users have disconnected from the the chat!");
+            System.out.println("SERVER LOG " + timestamp + " - " + "All Users have disconnected from the the chat!");
         }
-
-
     }
 
     public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
