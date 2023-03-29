@@ -11,8 +11,7 @@ import java.io.IOException;
 //        o A group should be correctly formed connecting with all members where all
 //        members can communicate without any error.
 //
-//        TODO: Server Log with Timestamps (Save in Terminal Output or Log file)
-//        FIXME: Add timestamps
+//        TODO: Server Log with Timestamps and log file
 //        FIXME: Add log file
 //        • Group state maintenance [10 marks]
 //        o The state of the group must be maintained correctly. This includes recording of
@@ -27,7 +26,7 @@ import java.io.IOException;
 //
 //        TODO: Refactor with design patterns -
 //         - Server and Coordinator -> "Singleton Pattern"
-//         - Get/Set Array of clientHandlers -> "Observer Pattern"
+//         - clientHandlers -> "Observer Pattern"
 //        FIXME: Add Singleton design pattern to Server and Client
 //        FIXME: Add Observer Pattern to report on state of group
 //          
@@ -47,10 +46,8 @@ import java.io.IOException;
 
 public class ServerController {
     /**
-     Multi-Threaded Server: Controller for Clients
+     Multi Threaded Server
      **/
-
-    // FIXME: Add Singleton Design Pattern (We only need one Server at a time)
 
     public static void main(String[] args) throws IOException {
 
@@ -58,5 +55,4 @@ public class ServerController {
         ServerHandler.startServer();
 
     }
-
 }

@@ -11,10 +11,10 @@ public class ServerHandler {
     public static void startServer() throws IOException {
 
         // initiate socket on port number, construct Server object
-
+        // Singleton serverSocket = Singleton.getInstance();
         ServerSocket serverSocket = new ServerSocket(9000);
 
-        ServerHandler serverHandler = new ServerHandler(serverSocket);
+        //ServerHandler serverHandler = new ServerHandler(serverSocket);
 
         LocalDateTime currentTime = LocalDateTime.now();
         DateTimeFormatter formattedTime = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -23,11 +23,10 @@ public class ServerHandler {
 
         try {
             System.out.println("SERVER LOG " + timestamp + " - SERVER STARTED");
-            // A recursive while loop, constantly checking if a client socket is trying to connect on host/port
 
+            // recursively checking if a client socket is trying to connect on host/port
             while (!serverSocket.isClosed()) {
                 // Accept connection
-                // TODO: SocketBuilder Abstraction
                 Socket socket = serverSocket.accept();
 
                 // Print information to server terminal/CLI
@@ -42,9 +41,6 @@ public class ServerHandler {
                 // ".start()" MUST be run for each thread
                 thread.start();
             }
-
-
-
 
         } catch (IOException e) {
             System.out.println("SERVER LOG" + timestamp + " - SERVER MESSAGE: All Users Disconnected From Chat");
