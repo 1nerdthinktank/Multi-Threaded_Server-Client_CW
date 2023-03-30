@@ -51,11 +51,11 @@ public class ServerClientHandler implements Runnable {
     private void initialise() throws IOException {
         this.clientUsername = bufferedReader.readLine();
 
-        broadcastMessage("SERVER BROADCAST: " + clientUsername + " has entered the group chat");
+        broadcastMessage("SERVER MESSAGE: " + clientUsername + " has entered the group chat");
 
         // if start of server, informs user they are coordinator
         if (peers.size() == 1) {
-            broadcastMessage("SERVER BROADCAST: " + timeStamp() + clientUsername + " Is the first to join the chat, and has the status of coordinator");
+            broadcastMessage("SERVER MESSAGE: " + timeStamp() + clientUsername + " Is the first to join the chat, and has the status of coordinator");
             isCoordinator = true;
         }
     }

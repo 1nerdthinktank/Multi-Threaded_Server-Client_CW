@@ -42,7 +42,7 @@ public class ServerHandler {
     }
 
     private void Log(String message) {
-        System.out.println(timeStamp() + ":" + message);
+        System.out.println(timeStamp() + ": " + message);
     }
 
     private static final DateTimeFormatter formattedTime = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
