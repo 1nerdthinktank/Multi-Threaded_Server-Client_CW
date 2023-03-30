@@ -25,7 +25,7 @@ public class ServerClientHandler implements Runnable {
     private boolean isCoordinator = false;
 
     private void Log(String message) {
-        System.out.println(timeStamp() + ":" + message);
+        System.out.println(timeStamp() + ": " + message);
     }
 
     private static final DateTimeFormatter formattedTime = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -55,8 +55,9 @@ public class ServerClientHandler implements Runnable {
 
         // if start of server, informs user they are coordinator
         if (peers.size() == 1) {
-            broadcastMessage("SERVER MESSAGE: " + timeStamp() + clientUsername + " Is the first to join the chat, and has the status of coordinator");
-            isCoordinator = true;
+            broadcastMessage("SERVER MESSAGE: " + timeStamp() + clientUsername + " is the first to join the chat, and has the status of coordinator");
+            // isCoordinator = true;
+            peers.get(0).makeCoordinator();
         }
     }
 
@@ -71,7 +72,7 @@ public class ServerClientHandler implements Runnable {
                 messageFromClient = bufferedReader.readLine();
 
                 if (messageFromClient == null) {
-                    throw new IOException(); // Added to check if message is not null
+                    throw new IOException();
                 }
 
                 handleMessage(messageFromClient);
