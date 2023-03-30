@@ -20,7 +20,7 @@ public class ClientSocket {
         }
     }
 
-    public void SendLoop() {
+    public void sendLoop() {
         try {
             bufferedWriter.write(username);
             bufferedWriter.newLine();
@@ -30,6 +30,12 @@ public class ClientSocket {
 
             while (socket.isConnected()) {
                 String messageToSend = scanner.nextLine();
+
+                if (messageToSend.equals("\\quit")) {
+                    System.out.println("Quit from chat");
+                    System.exit(0);
+                    // does not remove coordinator..
+                }
 
                 bufferedWriter.write(messageToSend);
                 bufferedWriter.newLine();
@@ -41,7 +47,7 @@ public class ClientSocket {
         }
     }
 
-    public void StartMessageListener() {
+    public void startMessageListener() {
         new Thread(() -> {
             String msgFromGroupChat;
 

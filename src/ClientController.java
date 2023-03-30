@@ -8,23 +8,21 @@ public class ClientController {
 
     public static void main(String[] args) throws IOException {
 
-        // unique username validation
-//        String username = "";
-//        try {
-//            Scanner scanner = new Scanner(System.in);
-//            System.out.println("Enter your ID or username for the group chat: ");
-//            String selectedUsername = scanner.nextLine();
-//            boolean isNameUnique = ClientHandler.clientHandlers.toString().contains(selectedUsername);
-//
-//            if (isNameUnique) {
-//                username = selectedUsername;
-//            }
-//        } catch (IllegalArgumentException e) {
-//            System.out.println("Please select a different name/id - Username Already in Use!");
-//        }
+
+
         Scanner scanner = new Scanner(System.in);
 
         String username = input(scanner, "Enter your ID or username for the group chat: ");
+
+//            boolean isNameUnique = ClientHandler.clientHandlers.toString().contains(selectedUsername);
+//
+//            while (!isNameUnique) {
+//            System.out.println("Please select a different name/id - Username Already in Use!");
+//            String username = input(scanner, "Enter your ID or username for the group chat: ");
+
+//            } else {
+//               break;
+//            }
 
         String ip = input(scanner, "Enter ip to bind to [localhost]: ");
         ip = ip.isBlank() ? "localhost" : ip;
@@ -41,8 +39,8 @@ public class ClientController {
         ClientSocket client = new ClientSocket(socket, username);
 
         // listen / send on separate processes, so they do not block each other.
-        client.StartMessageListener();
-        client.SendLoop();
+        client.startMessageListener();
+        client.sendLoop();
     }
 
     private static String input(Scanner inScanner, String prompt) {

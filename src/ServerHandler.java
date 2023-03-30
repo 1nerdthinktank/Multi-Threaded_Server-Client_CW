@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class ServerHandler {
-    private final ArrayList<ClientHandler> handlers = new ArrayList<>();
+    private final ArrayList<ServerClientHandler> handlers = new ArrayList<>();
     private ServerSocket serverSocket;
 
     public void startServer() {
@@ -28,7 +28,7 @@ public class ServerHandler {
 
                 // Construct a new object instance for the ClientHandler class, where "Runnable" interface is
                 // implemented and the "run()" method is "Handled" for each socket object that connects
-                ClientHandler clientHandler = new ClientHandler(socket, handlers);
+                ServerClientHandler clientHandler = new ServerClientHandler(socket, handlers);
 
                 // A thread is spawned for each instance of clientHandler object
                 Thread thread = new Thread(clientHandler);
@@ -42,12 +42,12 @@ public class ServerHandler {
     }
 
     private void Log(String message) {
-        System.out.println(TimeStamp() + ":" + message);
+        System.out.println(timeStamp() + ":" + message);
     }
 
     private static final DateTimeFormatter formattedTime = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
-    private String TimeStamp() {
+    private String timeStamp() {
         LocalDateTime currentTime = LocalDateTime.now();
         return currentTime.format(formattedTime);
     }

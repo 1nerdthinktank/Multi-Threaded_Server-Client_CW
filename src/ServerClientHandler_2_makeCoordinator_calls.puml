@@ -1,0 +1,137 @@
+@startuml
+
+/' diagram meta data start
+config=CallConfiguration;
+{
+  "rootMethod": "ServerClientHandler#makeCoordinator()",
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": "",
+    "treatFinalFieldsAsMandatory": false
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": true,
+    "cutInterfaceStructures": true,
+    "cutDataStructures": true,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 3,
+    "backwardDepth": 3,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false, // root node is included
+    "useMethodCallsForStructureDiagram": "ForwardOnly" // ForwardOnly, BothDirections, No
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showMethodParametersTypes": false,
+    "showMethodParametersNames": false,
+    "showMethodReturnType": false,
+    "showPackageLevels": 2,
+    "showCallOrder": false,
+    "edgeMode": "MethodsOnly", // TypesOnly, MethodsOnly, TypesAndMethods, MethodsAndDirectTypeUsage
+    "showDetailedClassStructure": false
+  },
+  "rootClass": "ServerClientHandler",
+  "extensionCallbackMethod": "" // qualified.class.name#methodName - signature: public static String method(String)
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="LR"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_1694949796 { 
+   	label=ServerClientHandler
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   subgraph cluster_306445258 { 
+   	label=ServerClientHandler
+	labeljust=l
+	fillcolor=white
+	style=filled
+   
+   ServerClientHandler1694949796XXXSend1808118735[
+	label="+ Send()"
+	style=filled
+	fillcolor=white
+	tooltip="ServerClientHandler
+
+null"
+	fontcolor=darkgreen
+];
+
+ServerClientHandler1694949796XXXmakeCoordinator0[
+	label="+ makeCoordinator()"
+	style=filled
+	fillcolor=white
+	tooltip="ServerClientHandler
+
+null"
+	penwidth=4
+	fontcolor=darkgreen
+];
+
+ServerClientHandler1694949796XXXrun0[
+	label="+ run()"
+	style=filled
+	fillcolor=white
+	tooltip="ServerClientHandler
+
+null"
+	fontcolor=darkgreen
+];
+} 
+} 
+
+'edges    
+ServerClientHandler1694949796XXXmakeCoordinator0 -> ServerClientHandler1694949796XXXSend1808118735;
+ServerClientHandler1694949796XXXrun0 -> ServerClientHandler1694949796XXXmakeCoordinator0;
+    
+}
+@enduml
