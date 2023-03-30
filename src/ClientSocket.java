@@ -3,10 +3,10 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ClientSocket {
-    public Socket socket;
-    public BufferedReader bufferedReader;
-    public BufferedWriter bufferedWriter;
-    public String username;
+    private Socket socket;
+    private BufferedReader bufferedReader;
+    private BufferedWriter bufferedWriter;
+    private String username;
 
     public ClientSocket(Socket socket, String username) {
         try {
@@ -16,11 +16,11 @@ public class ClientSocket {
             this.username = username;
 
         } catch (IOException e) {
-            closeEverything(socket, bufferedReader, bufferedWriter);
+            closeEverything();
         }
     }
 
-    public void sendMessage() {
+    public void SendLoop() {
         try {
             bufferedWriter.write(username);
             bufferedWriter.newLine();
@@ -30,36 +30,34 @@ public class ClientSocket {
 
             while (socket.isConnected()) {
                 String messageToSend = scanner.nextLine();
-                bufferedWriter.write(username + ": " + messageToSend);
+
+                bufferedWriter.write(messageToSend);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
             }
 
         } catch (IOException e) {
-            closeEverything(socket, bufferedReader, bufferedWriter);
+            closeEverything();
         }
     }
 
-    public void listenForMessage() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String msgFromGroupChat;
+    public void StartMessageListener() {
+        new Thread(() -> {
+            String msgFromGroupChat;
 
-                while (socket.isConnected()) {
-                    try {
-                        msgFromGroupChat = bufferedReader.readLine();
-                        System.out.println(msgFromGroupChat);
+            while (socket.isConnected()) {
+                try {
+                    msgFromGroupChat = bufferedReader.readLine();
+                    System.out.println(msgFromGroupChat);
 
-                    } catch (IOException e) {
-                        closeEverything(socket, bufferedReader, bufferedWriter);
-                    }
+                } catch (IOException e) {
+                    closeEverything();
                 }
             }
         }).start(); // start Runnable thread
     }
 
-    public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
+    private void closeEverything() {
         try {
             if (bufferedReader != null) {
                 bufferedReader.close();

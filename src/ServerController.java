@@ -45,14 +45,7 @@ import java.io.IOException;
 //        o Adequate design and development of components in the implementation.
 
 public class ServerController {
-    /**
-     Multi Threaded Server
-     **/
-
-    public static void main(String[] args) throws IOException {
-
-        // initialise server
-        ServerHandler.startServer();
-
+    public static void main(String[] args) {
+        new ServerHandler().startServer();
     }
 }
