@@ -12,10 +12,10 @@ public class ClientController {
 
         String username = input(scanner, "Enter your ID or username for the group chat: ");
 
-        String ip = input(scanner, "Enter ip to bind to [localhost]: ");
+        String ip = input(scanner, "Enter ip to bind to, or press enter to use default value [Default = localhost]: ");
         ip = ip.isBlank() ? "localhost" : ip;
 
-        String portStr = input(scanner, "Enter port to bind to [8080]: ");
+        String portStr = input(scanner, "Enter port to bind to, or press enter to use default value [Default = 8080]: ");
         int port = portStr.isBlank() ? 8080 : Integer.parseInt(portStr);
 
         System.out.println("CLIENT MESSAGE: Welcome to the group chat, " + username + "! " +

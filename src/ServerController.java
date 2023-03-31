@@ -4,6 +4,6 @@
 public class ServerController {
     public static void main(String[] args) {
 
-        new ServerHandler().startServer();
+        new ServerSocket().startServer();
     }
 }

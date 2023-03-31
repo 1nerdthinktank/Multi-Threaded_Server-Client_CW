@@ -1,19 +1,18 @@
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class ServerHandler {
+public class ServerSocket {
     private final ArrayList<ServerClientHandler> handlers = new ArrayList<>();
-    private ServerSocket serverSocket;
+    private java.net.ServerSocket serverSocket;
 
     public void startServer() {
 
         try {
             // initiate socket on port number, construct Server object
-            serverSocket = new ServerSocket(8080);
+            serverSocket = new java.net.ServerSocket(8080);
 
             Log("SERVER STARTED");
 
