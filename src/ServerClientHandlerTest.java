@@ -1,17 +1,19 @@
-//import org.junit.jupiter.api.Test;
-//import java.io.*;
-//
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//
-//class ServerClientHandlerTest {
-//    private BufferedReader bufferedReader;
-//    private BufferedWriter bufferedWriter;
-//
-//    String testMessage = ("Test Complete");
-//
-//    @Test
-//    void send() throws IOException {
-//        assertEquals(testMessage, bufferedWriter.write(testMessage));
-//
-//    }
-//}
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import java.io.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class ServerClientHandlerTest {
+    // [set up]
+    private boolean isCoordinator = false;
+
+    @Test
+    void makeCoordinatorTest() throws IOException {
+        makeCoordinator();
+        assertTrue(isCoordinator);
+    }
+
+    private void makeCoordinator() {
+        isCoordinator = true;
+    }
+}

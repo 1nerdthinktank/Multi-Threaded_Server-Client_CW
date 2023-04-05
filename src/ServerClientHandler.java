@@ -53,8 +53,10 @@ public class ServerClientHandler implements Runnable {
         broadcastMessage("SERVER MESSAGE: " + clientUsername + " has entered the group chat");
 
         // if start of server, informs user they are coordinator
-        if (peers.size() == 1) {
-            broadcastMessage("SERVER MESSAGE: " + timeStamp() + clientUsername + " is the first to join the chat, and has the status of coordinator");
+        // cannot initialise peers.size() with less than 2
+        if (!isCoordinator && peers.size() == 2 && (!this.clientUsername.equals(peers.get(0).clientUsername))) {
+            broadcastMessage("SERVER MESSAGE: " + peers.get(0).clientUsername +
+                    " was the first to join the chat. and is the new coordinator.");
             // isCoordinator = true
             peers.get(0).makeCoordinator();
         }
@@ -97,7 +99,7 @@ public class ServerClientHandler implements Runnable {
 
     public void makeCoordinator() throws IOException {
         isCoordinator = true;
-        broadcastMessage(clientUsername + " is the new coordinator");
+        broadcastMessage(peers.get(0).clientUsername + " is the new coordinator");
     }
 
     public void send(String message) throws IOException {
@@ -116,14 +118,14 @@ public class ServerClientHandler implements Runnable {
     }
 
     private void removeClientHandler() throws IOException {
-        broadcastMessage("SERVER MESSAGE - " + clientUsername + " has suddenly disconnected from the the chat!");
+        broadcastMessage("SERVER MESSAGE: " + clientUsername + " has suddenly disconnected from the the chat!");
         peers.remove(this);
 
-        if (isCoordinator && peers.size() >= 1) {
-            broadcastMessage("SERVER MESSAGE - " + clientUsername + " is no longer the coordinator, a new one will be chosen. ");
+        if ((isCoordinator) && (peers.size() >= 1)) {
+            broadcastMessage("SERVER MESSAGE: " + clientUsername + " is no longer the coordinator, a new one will be chosen. ");
             peers.get(0).makeCoordinator();
 
-        } else if (peers.size() == 0) {
+        } else if (peers.isEmpty()) {
             Log("All Users have disconnected from the the chat!");
         }
     }
@@ -145,15 +147,15 @@ public class ServerClientHandler implements Runnable {
     }
 
     private void quit() throws IOException {
-        send("Connection Terminated");
         broadcastMessage("SERVER MESSAGE: " + clientUsername + " has quit the chat!");
+        send("Connection Terminated");
         peers.remove(this);
 
         if (isCoordinator && peers.size() > 1) {
-            broadcastMessage("SERVER MESSAGE - " + clientUsername + " is no longer the coordinator, a new one will be chosen. ");
-            peers.get(0).makeCoordinator();
+            broadcastMessage("SERVER MESSAGE: " + clientUsername + " is no longer the coordinator, a new one will be chosen. ");
+            peers.get(1).makeCoordinator();
 
-        } else if (peers.size() == 0) {
+        } else if (peers.isEmpty()) {
             Log("All Users have disconnected from the the chat!");
         }
     }
@@ -167,7 +169,7 @@ public class ServerClientHandler implements Runnable {
                 \\help --> Displays a very helpful menu
                 \\users --> Displays all users usernames
                 \\dm <user> <message> --> Sends message to user
-                \\quit --> Quit Chat Server""");
+                \\quit --> Quit Chat Server \n""");
     }
 
     private void sendUserList() throws IOException {

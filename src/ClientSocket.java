@@ -9,6 +9,7 @@ public class ClientSocket {
     private BufferedWriter bufferedWriter;
     private String username;
 
+
     public ClientSocket(Socket socket, String username) {
         try {
             this.socket = socket;

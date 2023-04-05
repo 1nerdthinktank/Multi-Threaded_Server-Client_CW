@@ -20,7 +20,7 @@ public class ClientController {
 
         System.out.println("CLIENT MESSAGE: Welcome to the group chat, " + username + "! " +
                 "\nCLIENT MESSAGE: Please type a message and press 'Enter'." +
-                "\nCLIENT MESSAGE: Type '\\help' for options/commands or '\\quit' to exit.");
+                "\nCLIENT MESSAGE: Type '\\help' for options/commands or '\\quit' to exit.\n");
 
         Socket socket = new Socket(ip, port);
         ClientSocket client = new ClientSocket(socket, username);
