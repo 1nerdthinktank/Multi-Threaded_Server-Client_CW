@@ -16,7 +16,7 @@ public class ServerSocket {
 
             Log("SERVER STARTED");
 
-            // recursively checking if a client socket is trying to connect on host/port
+            // Recursively checking if a client socket is trying to connect on host/port
             while (!serverSocket.isClosed()) {
 
                 // Accept connection
@@ -25,11 +25,11 @@ public class ServerSocket {
                 // Print information to server terminal/CLI
                 Log("A new user is connecting to the group chat!");
 
-                // Construct a new object instance for the ClientHandler class, where "Runnable" interface is
+                // Construct a new object for the ClientHandler class, where "Runnable" interface is
                 // implemented and the "run()" method is "Handled" for each socket object that connects
                 ServerClientHandler clientHandler = new ServerClientHandler(socket, handlers);
 
-                // A thread is spawned for each instance of clientHandler object
+                // A thread is spawned for each new instance
                 Thread thread = new Thread(clientHandler);
                 thread.start();
             }

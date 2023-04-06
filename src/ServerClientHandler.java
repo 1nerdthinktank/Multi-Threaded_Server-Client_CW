@@ -190,9 +190,6 @@ public class ServerClientHandler implements Runnable {
         }
     }
 
-    private void exit() {
-        System.exit(0);
-    }
     private void sendHelp() throws IOException {
         sendToClient("""
                 DON'T PANIC, grab a towel, the answer is 42.
