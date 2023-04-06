@@ -54,7 +54,7 @@ public class ServerClientHandler implements Runnable {
             // isCoordinator = true
             peers.get(0).makeCoordinator();
 
-        } else if (!isCoordinator && peers.size() >= 2) {
+        } else if (!isCoordinator && peers.size() > 2) {
             sendToClient("SERVER MESSAGE: " + peers.get(0).clientUsername +
                     " is currently the coordinator.");
 
@@ -138,6 +138,7 @@ public class ServerClientHandler implements Runnable {
     public void makeCoordinator() throws IOException {
         isCoordinator = true;
         broadcastMessage(clientUsername + " is the new coordinator");
+        sendToClient(clientUsername + " is the new coordinator");
     }
 
     public void removeCoordinator() throws IOException {
@@ -149,16 +150,17 @@ public class ServerClientHandler implements Runnable {
 
         if ((isCoordinator) && (peers.size() >= 1)) {
             broadcastMessage("SERVER MESSAGE: " + peers.get(0).clientUsername + " is no longer the coordinator, a new one will be chosen. ");
-            peers.get(0).removeCoordinator();
+
+            //peers.get(0).removeCoordinator();
             peers.get(1).makeCoordinator();
-            peers.remove(this);
+            //peers.remove(this);
 
         } else if (peers.isEmpty()) {
             log("All Users have disconnected from the the chat!");
 
         } else {
         broadcastMessage("SERVER MESSAGE: " + clientUsername + " has suddenly disconnected from the the chat!");
-        peers.remove(this);
+        //peers.remove(this);
         }
     }
 
@@ -167,32 +169,28 @@ public class ServerClientHandler implements Runnable {
     private void quit() throws IOException {
 
         if ((isCoordinator) && (peers.size() >= 1)) {
-            sendToClient("Connection Terminated");
 
             broadcastMessage("SERVER MESSAGE: " + clientUsername + " has quit the chat!");
             broadcastMessage("SERVER MESSAGE: " + peers.get(0).clientUsername + " is no longer the coordinator, a new one will be chosen. ");
+            sendToClient("Connection Terminated");
             peers.get(0).removeCoordinator();
             peers.get(1).makeCoordinator();
             peers.remove(this);
-
-            if (socket != null) {
-                socket.close();
-            }
 
         } else if (peers.isEmpty()) {
             log("All Users have disconnected from the the chat!");
 
         } else {
             broadcastMessage("SERVER MESSAGE: " + clientUsername + " has quit the chat!");
-            sendToClient("Connection Terminated");
             peers.remove(this);
+            sendToClient("Connection Terminated");
 
         }
     }
 
     private void sendHelp() throws IOException {
         sendToClient("""
-                DON'T PANIC, grab a towel, the answer is 42.
+                TERMINAL MENU:
                                                  
                 Type the commend in order to select it, making sure you use a backslash '\\'.
                                                  

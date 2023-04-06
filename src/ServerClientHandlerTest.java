@@ -7,7 +7,7 @@ class ServerClientHandlerTest {
     private boolean isCoordinator = false;
 
     @Test
-    void makeCoordinatorTest() throws IOException {
+    void givenCoordinatorFalse_whenMakeCoordinator_thenCoordinatorTrue() throws IOException {
         makeCoordinator();
         assertTrue(isCoordinator);
     }
