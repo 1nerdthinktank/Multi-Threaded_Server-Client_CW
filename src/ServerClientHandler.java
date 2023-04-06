@@ -20,19 +20,10 @@ public class ServerClientHandler implements Runnable {
     private BufferedWriter bufferedWriter;
 
     public String clientUsername;
-
     private boolean isCoordinator = false;
-
-    private void Log(String message) {
-        System.out.println(timeStamp() + ": " + message);
-    }
 
     private static final DateTimeFormatter formattedTime = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
-    private String timeStamp() {
-        LocalDateTime currentTime = LocalDateTime.now();
-        return currentTime.format(formattedTime);
-    }
 
     public ServerClientHandler(Socket socket, ArrayList<ServerClientHandler> peers) {
         this.socket = socket;
@@ -52,13 +43,21 @@ public class ServerClientHandler implements Runnable {
 
         broadcastMessage("SERVER MESSAGE: " + clientUsername + " has entered the group chat");
 
-        // if start of server, informs user they are coordinator
+        // if start of server, checks for coordinator
         // cannot initialise peers.size() with less than 2
+        // let (peers.get(0)) be coordinator, if (current username != first username in list of users -> do nothing
         if (!isCoordinator && peers.size() == 2 && (!this.clientUsername.equals(peers.get(0).clientUsername))) {
+
             broadcastMessage("SERVER MESSAGE: " + peers.get(0).clientUsername +
-                    " was the first to join the chat. and is the new coordinator.");
+                             " was the first to join the chat, and is now the coordinator!");
+
             // isCoordinator = true
             peers.get(0).makeCoordinator();
+
+        } else if (!isCoordinator && peers.size() >= 2) {
+            sendToClient("SERVER MESSAGE: " + peers.get(0).clientUsername +
+                    " is currently the coordinator.");
+
         }
     }
 
@@ -83,6 +82,7 @@ public class ServerClientHandler implements Runnable {
         }
     }
 
+    // Message Logic
     private void handleMessage(String message) throws IOException {
         if (message.startsWith("\\quit")) {
             quit();
@@ -93,83 +93,111 @@ public class ServerClientHandler implements Runnable {
         } else if (message.startsWith("\\dm")) {
             SendDM(message);
         } else {
-            broadcastMessage(clientUsername + ": " + message);
+            broadcastMessage("GROUP CHAT " + timeStamp() + ": " + clientUsername + ": " + message);
         }
     }
 
-    public void makeCoordinator() throws IOException {
-        isCoordinator = true;
-        broadcastMessage(peers.get(0).clientUsername + " is the new coordinator");
+
+
+
+    // Send to all client terminals
+    private void broadcastMessage(String messageToSend) throws IOException {
+
+        log(messageToSend);
+
+        for (ServerClientHandler clientHandler : peers) {
+            if (!clientHandler.clientUsername.equals(clientUsername)) {
+                clientHandler.sendNoLogs(messageToSend);
+            }
+        }
     }
 
-    public void send(String message) throws IOException {
+    public void sendNoLogs(String message) throws IOException {
         bufferedWriter.write(message);
         bufferedWriter.newLine();
         bufferedWriter.flush();
     }
 
-    private void broadcastMessage(String messageToSend) throws IOException {
-        for (ServerClientHandler clientHandler : peers) {
-            if (!clientHandler.clientUsername.equals(clientUsername)) {
-                clientHandler.send("GROUP CHAT " + timeStamp() + " - " + messageToSend);
-                Log(messageToSend);
-            }
-        }
+    // Send to one client terminal
+    public void sendToClient(String message) throws IOException {
+        bufferedWriter.write(message);
+        bufferedWriter.newLine();
+        bufferedWriter.flush();
+        log(message);
     }
 
+    // Send to server terminal
+    public void log(String message) {
+        System.out.println(timeStamp() + ": " + message);
+    }
+
+    private String timeStamp() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        return currentTime.format(formattedTime);
+    }
+
+    // Coordinator Logic
+    public void makeCoordinator() throws IOException {
+        isCoordinator = true;
+        broadcastMessage(clientUsername + " is the new coordinator");
+    }
+
+    public void removeCoordinator() throws IOException {
+        isCoordinator = false;
+    }
+
+    // Handling Quit Exceptions
     private void removeClientHandler() throws IOException {
-        broadcastMessage("SERVER MESSAGE: " + clientUsername + " has suddenly disconnected from the the chat!");
-        peers.remove(this);
 
         if ((isCoordinator) && (peers.size() >= 1)) {
-            broadcastMessage("SERVER MESSAGE: " + clientUsername + " is no longer the coordinator, a new one will be chosen. ");
-            peers.get(0).makeCoordinator();
-
-        } else if (peers.isEmpty()) {
-            Log("All Users have disconnected from the the chat!");
-        }
-    }
-
-    private void closeEverything() {
-        try {
-            removeClientHandler();
-            if (bufferedReader != null) {
-                bufferedReader.close();
-            }
-            if (bufferedWriter != null) {
-                bufferedWriter.close();
-            }
-            if (socket != null) {
-                socket.close();
-            }
-        } catch (IOException ignored) {
-        }
-    }
-
-    private void quit() throws IOException {
-        broadcastMessage("SERVER MESSAGE: " + clientUsername + " has quit the chat!");
-        send("Connection Terminated");
-        peers.remove(this);
-
-        if (isCoordinator && peers.size() > 1) {
-            broadcastMessage("SERVER MESSAGE: " + clientUsername + " is no longer the coordinator, a new one will be chosen. ");
+            broadcastMessage("SERVER MESSAGE: " + peers.get(0).clientUsername + " is no longer the coordinator, a new one will be chosen. ");
+            peers.get(0).removeCoordinator();
             peers.get(1).makeCoordinator();
+            peers.remove(this);
 
         } else if (peers.isEmpty()) {
-            Log("All Users have disconnected from the the chat!");
+            log("All Users have disconnected from the the chat!");
+
+        } else {
+        broadcastMessage("SERVER MESSAGE: " + clientUsername + " has suddenly disconnected from the the chat!");
+        peers.remove(this);
+        }
+    }
+
+
+    // Menu Logic
+    private void quit() throws IOException {
+
+        if ((isCoordinator) && (peers.size() >= 1)) {
+            sendToClient("Connection Terminated");
+
+            broadcastMessage("SERVER MESSAGE: " + clientUsername + " has quit the chat!");
+            broadcastMessage("SERVER MESSAGE: " + peers.get(0).clientUsername + " is no longer the coordinator, a new one will be chosen. ");
+            peers.get(0).removeCoordinator();
+            peers.get(1).makeCoordinator();
+            peers.remove(this);
+
+        } else if (peers.isEmpty()) {
+            log("All Users have disconnected from the the chat!");
+
+        } else {
+            broadcastMessage("SERVER MESSAGE: " + clientUsername + " has quit the chat!");
+            sendToClient("Connection Terminated");
+            peers.remove(this);
+
         }
     }
 
     private void sendHelp() throws IOException {
-        send("""
-                DON'T PANIC, grab a towel, and count to 42.
+        sendToClient("""
+                DON'T PANIC, grab a towel, the answer is 42.
                                                  
-                Type the commend in order to select it making sure you use a backslash '\\'.
+                Type the commend in order to select it, making sure you use a backslash '\\'.
                                                  
                 \\help --> Displays a very helpful menu
-                \\users --> Displays all users usernames
-                \\dm <user> <message> --> Sends message to user
-                \\quit --> Quit Chat Server \n""");
+                \\users --> Displays all current usernames
+                \\dm <user> <message> --> Sends direct message to user
+                \\quit --> Quits chat server \n""");
     }
 
     private void sendUserList() throws IOException {
@@ -178,7 +206,7 @@ public class ServerClientHandler implements Runnable {
             sb.append(client.clientUsername);
             sb.append("\n");
         }
-        send(sb.toString());
+        sendToClient(sb.toString());
     }
 
     private static final Pattern dmPattern = Pattern.compile("\\\\dm (\\S*) (.*)");
@@ -195,10 +223,25 @@ public class ServerClientHandler implements Runnable {
 
         for (ServerClientHandler clientHandler : peers) {
             if (clientHandler.clientUsername.equals(recipient)) {
-                clientHandler.send("PRIVATE CHAT " + timeStamp() + " - "+ clientUsername + ": " + message);
-                Log("DM " + recipient + ": " + message);
+                clientHandler.sendToClient("PRIVATE CHAT " + timeStamp() + " - From: " + clientUsername + ". --> To: " + recipient + ": " + message);
                 break;
             }
+        }
+    }
+
+    private void closeEverything() {
+        try {
+            removeClientHandler();
+            if (bufferedReader != null) {
+                bufferedReader.close();
+            }
+            if (bufferedWriter != null) {
+                bufferedWriter.close();
+            }
+            if (socket != null) {
+                socket.close();
+            }
+        } catch (IOException ignored) {
         }
     }
 }
