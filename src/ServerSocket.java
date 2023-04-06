@@ -34,7 +34,7 @@ public class ServerSocket {
                 thread.start();
             }
         } catch (IOException e) {
-            Log("Connection Error: Server Port (8080) is not available.  ");
+            Log("Connection Error: Server Port (8080) is not available. ");
         } finally {
             closeServerSocket();
         }

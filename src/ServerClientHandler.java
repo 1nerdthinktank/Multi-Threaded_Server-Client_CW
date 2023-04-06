@@ -98,8 +98,6 @@ public class ServerClientHandler implements Runnable {
     }
 
 
-
-
     // Send to all client terminals
     private void broadcastMessage(String messageToSend) throws IOException {
 
@@ -177,6 +175,10 @@ public class ServerClientHandler implements Runnable {
             peers.get(1).makeCoordinator();
             peers.remove(this);
 
+            if (socket != null) {
+                socket.close();
+            }
+
         } else if (peers.isEmpty()) {
             log("All Users have disconnected from the the chat!");
 
@@ -188,6 +190,9 @@ public class ServerClientHandler implements Runnable {
         }
     }
 
+    private void exit() {
+        System.exit(0);
+    }
     private void sendHelp() throws IOException {
         sendToClient("""
                 DON'T PANIC, grab a towel, the answer is 42.
@@ -223,7 +228,7 @@ public class ServerClientHandler implements Runnable {
 
         for (ServerClientHandler clientHandler : peers) {
             if (clientHandler.clientUsername.equals(recipient)) {
-                clientHandler.sendToClient("PRIVATE CHAT " + timeStamp() + " - From: " + clientUsername + ". --> To: " + recipient + ": " + message);
+                clientHandler.sendToClient("PRIVATE CHAT " + timeStamp() + " - From - " + clientUsername + "\nTo - " + recipient + ": " + message);
                 break;
             }
         }
